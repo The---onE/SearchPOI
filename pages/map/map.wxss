@@ -15,3 +15,14 @@ page {
   width: 100%;
   height: 90%;
 }
+
+.input-modal {
+  text-align: center;
+  font-size: 20pt;
+  margin: 32rpx;
+}
+
+.input-modal-s {
+  font-size: 16pt;
+  margin: 40rpx;
+}
