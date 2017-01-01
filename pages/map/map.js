@@ -1,8 +1,8 @@
 // pages/map/map.js
-//获取应用实例
-var app = getApp()
+// 获取应用实例
+var app = getApp();
 
-//获取LeanCloud对象
+// 获取LeanCloud对象
 const AV = require('../../libs/av-weapp.js');
 
 var LOCATION_TYPE = 'gcj02';
@@ -10,23 +10,25 @@ var DEFAULT_SCALA = 16;
 
 var location = {}; // 定位坐标
 var LOCATION_MARKER_ID = 0; // 定位点ID
-var LOCATION_MARKER_RES = '/res/location.png'
+var LOCATION_MARKER_RES = '/res/location.png'; // 定位标记图标
 
 var selected; // 选取坐标
 var SELECTED_MARKER_ID = 1; // 选取点ID
-var SELECTED_MARKER_RES = '/res/selected.png'
+var SELECTED_MARKER_RES = '/res/selected.png'; // 选取标记图标
 
 // 添加收藏对话框
 var collectTitle; // 标题
 var collectType; // 类型
 var collectContent; // 内容
 
+var COLLECTION_MARKER_RES = '/res/collection.png'; // 收藏标记图标
+
 var markers = [
-  //定位标记
+  // 定位标记
   {
     id: LOCATION_MARKER_ID,
   },
-  //选取点ID
+  // 选取点ID
   {
     id: SELECTED_MARKER_ID,
   }
@@ -35,7 +37,8 @@ var markers = [
 Page({
   data: {
     collectModalHidden: true, // 添加收藏对话框隐藏
-    value: '' //输入框清空
+    collectionModalHidden: true, // 收藏信息对话框隐藏
+    value: '' // 输入框清空
   },
 
   // 显示对话框
@@ -54,7 +57,6 @@ Page({
       type: LOCATION_TYPE, // 默认为 wgs84 返回 gps 坐标，gcj02 返回可用于 wx.openLocation 的坐标
       success: function (res) {
         // 定位成功
-        console.info(res);
         // 定位坐标
         location = {
           latitude: res.latitude,
@@ -68,7 +70,7 @@ Page({
           latitude: res.latitude,
           longitude: res.longitude,
           width: 100,
-          height: 100
+          height: 100,
         };
         // 更新数据
         that.setData({
@@ -85,6 +87,38 @@ Page({
         // 定位完成
       }
     })
+  },
+
+  // 加载收藏标记
+  showCollection: function () {
+    var that = this;
+    var query = new AV.Query('Collection');
+    // 添加条件后，开始查询
+    query.find()
+      .then(function (data) {
+        // 查询成功
+        for (var i = 0; i < data.length; ++i) {
+          // 添加标记
+          markers.push({
+            id: markers.length,
+            title: data[i].get('title'),
+            iconPath: COLLECTION_MARKER_RES,
+            latitude: data[i].get('latitude'),
+            longitude: data[i].get('longitude'),
+            width: 40,
+            height: 40,
+            type: data[i].get('type'),
+            content: data[i].get('content'),
+          });
+        }
+        that.setData({
+          markers: markers,
+        });
+      }, function (error) {
+        // 查询失败
+        console.error('Failed to save in LeanCloud:' + error.message);
+        that.showPrompt('加载收藏失败');
+      });
   },
 
   // 地图非标记点点击事件
@@ -134,12 +168,38 @@ Page({
 
   // 标记点点击事件
   onMarkerTap: function (e) {
+    // 定位标记
     if (e.markerId == LOCATION_MARKER_ID) {
       wx.showToast({
         title: '当前定位',
         icon: 'success',
-      })
+      });
+    } else if (e.markerId == SELECTED_MARKER_ID) {
+      // 选取标记
+      wx.showToast({
+        title: '选取位置',
+        icon: 'success',
+      });
+    } else {
+      // 收藏标记
+      var marker = markers[e.markerId];
+      var collection = {
+        title: marker.title,
+        type: marker.type,
+        content: marker.content,
+      };
+      // 弹出添加收藏对话框
+      this.setData({
+        collectionModalHidden: false,
+        collection: collection
+      });
     }
+  },
+  // 点击收藏信息对话框确认按钮
+  onCollectionTap: function () {
+    this.setData({
+      collectionModalHidden: true,
+    });
   },
 
   // 点击添加收藏按钮事件
@@ -173,6 +233,7 @@ Page({
       collectContent = '';
     }
 
+    
     var collection = AV.Object.extend('Collection');
     var col = new collection();
     col.set('title', collectTitle);
@@ -180,9 +241,21 @@ Page({
     col.set('content', collectContent);
     col.set('latitude', selected.latitude);
     col.set('longitude', selected.longitude);
-    col.save().then(function (todo) {
+    col.save().then(function (success) {
       // 添加成功
       that.showPrompt('添加成功');
+      markers.push({
+        id: markers.length,
+        title: collectTitle,
+        iconPath: COLLECTION_MARKER_RES,
+        latitude: selected.latitude,
+        longitude: selected.longitude,
+        width: 40,
+        height: 40
+      });
+      that.setData({
+        markers: markers,
+      });
       // 隐藏添加收藏对话框
       that.setData({
         collectModalHidden: true,
@@ -221,6 +294,7 @@ Page({
   onReady: function () {
     // 页面渲染完成
     this.getLocation(); // 定位
+    this.showCollection(); // 显示收藏点
   },
   onShow: function () {
     // 页面显示

@@ -16,6 +16,11 @@ page {
   height: 90%;
 }
 
+.view-modal {
+  display: flex;
+  flex-direction: column;
+}
+
 .input-modal {
   text-align: center;
   font-size: 20pt;
@@ -25,4 +30,15 @@ page {
 .input-modal-s {
   font-size: 16pt;
   margin: 40rpx;
+}
+
+.text-modal {
+  text-align: center;
+  font-size: 20pt;
+  margin: 16rpx;
+}
+
+.text-modal-s {
+  font-size: 16pt;
+  margin: 12rpx;
 }

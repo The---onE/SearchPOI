@@ -3,8 +3,17 @@
   <map class="map" longitude="{{position.longitude}}" latitude="{{position.latitude}}" scale="{{scala}}" markers="{{markers}}" bindmarkertap="onMarkerTap" bindtap="onMapTap" />
   <button bindtap="onCollectTap">添加收藏</button>
   <modal title="添加收藏" hidden="{{collectModalHidden}}" confirm-text="确定" cancel-text="取消" bindconfirm="onConfirmCollectTap" bindcancel="onCancelCollectTap">
-    <input class="input-modal" value="{{value}}" bindinput="onCollectTitleInput" placeholder="请输入标题" />
-    <input class="input-modal" value="{{value}}" bindinput="onCollectTypeInput" placeholder="请输入类型" />
-    <input class="input-modal-s" value="{{value}}" bindinput="onCollectContentInput" placeholder="请输入详细内容(可选)" />
+    <view class="view-modal">
+      <input class="input-modal" value="{{value}}" bindinput="onCollectTitleInput" placeholder="请输入标题" />
+      <input class="input-modal" value="{{value}}" bindinput="onCollectTypeInput" placeholder="请输入类型" />
+      <input class="input-modal-s" value="{{value}}" bindinput="onCollectContentInput" placeholder="请输入详细内容(可选)" />
+    </view>
+  </modal>
+  <modal title="收藏信息" hidden="{{collectionModalHidden}}" confirm-text="确定" cancel-text="取消" bindconfirm="onCollectionTap" bindcancel="onCollectionTap">
+    <view class="view-modal">
+      <text class="text-modal">{{collection.title}}</text>
+      <text class="text-modal">{{collection.type}}</text>
+      <text class="text-modal-s">{{collection.content}}</text>
+    </view>
   </modal>
 </view>
