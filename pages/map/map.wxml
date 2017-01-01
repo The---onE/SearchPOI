@@ -1,4 +1,5 @@
+
 <!--pages/map/map.wxml-->
 <view class="board">
-    <map class="map" />
+  <map class="map" longitude="{{position.longitude}}" latitude="{{position.latitude}}" scale="{{scala}}" markers="{{markers}}" bindmarkertap="onMarkerTap" />
 </view>

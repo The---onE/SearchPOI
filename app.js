@@ -32,6 +32,6 @@ App({
 //初始化LeanCloud对象
 const AV = require('./libs/av-weapp.js');
 AV.init({
-  appId: 'JU6HFVAzc5KrBnJBTMc7QbTe-gzGzoHsz',
-  appKey: 'ptscFhYmavGYVvIGCikAczN2',
+  appId: 'fYrPgAK53LHnhNxkmvuCDNtp-gzGzoHsz',
+  appKey: 'rjsDBgksFXhcrW7mSXb5nOct',
 });
