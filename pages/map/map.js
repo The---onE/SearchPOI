@@ -10,10 +10,12 @@ var DEFAULT_SCALA = 16;
 
 var location = {}; // 定位坐标
 var LOCATION_MARKER_ID = 0; // 定位点ID
+var locationMarker = { id: LOCATION_MARKER_ID }; //定位标记
 var LOCATION_MARKER_RES = '/res/location.png'; // 定位标记图标
 
 var selected; // 选取坐标
 var SELECTED_MARKER_ID = 1; // 选取点ID
+var selectedMarker = { id: SELECTED_MARKER_ID, }; //选取标记
 var SELECTED_MARKER_RES = '/res/selected.png'; // 选取标记图标
 
 // 添加收藏对话框
@@ -23,15 +25,13 @@ var collectContent; // 内容
 
 var COLLECTION_MARKER_RES = '/res/collection.png'; // 收藏标记图标
 
+var search; //搜索框文本
+
 var markers = [
   // 定位标记
-  {
-    id: LOCATION_MARKER_ID,
-  },
+  locationMarker,
   // 选取点ID
-  {
-    id: SELECTED_MARKER_ID,
-  }
+  selectedMarker,
 ]; // 地图标记
 
 Page({
@@ -63,7 +63,7 @@ Page({
           longitude: res.longitude,
         }
         // 更新定位标记
-        markers[LOCATION_MARKER_ID] = {
+        locationMarker = {
           id: LOCATION_MARKER_ID,
           title: 'location',
           iconPath: LOCATION_MARKER_RES,
@@ -72,6 +72,7 @@ Page({
           width: 100,
           height: 100,
         };
+        markers[LOCATION_MARKER_ID] = locationMarker;
         // 更新数据
         that.setData({
           position: location, // 定位坐标
@@ -120,6 +121,90 @@ Page({
         that.showPrompt('加载收藏失败');
       });
   },
+  // 搜索框输入事件
+  onSearchInput: function (e) {
+    search = e.detail.value;
+  },
+  // 搜索按钮点击事件
+  onSearchTap: function (e) {
+    if (!search || search.length == 0) {
+      this.showPrompt('搜索值不能为空');
+    }
+    var that = this;
+    // 新建查询
+    var query = new AV.Query('Collection');
+    query.contains('type', search);
+    query.find()
+      .then(function (data) {
+        // 查询成功
+        // 清空收藏标记
+        markers = [
+          locationMarker,
+          selectedMarker,
+        ];
+        for (var i = 0; i < data.length; ++i) {
+          // 添加标记
+          markers.push({
+            id: markers.length,
+            title: data[i].get('title'),
+            iconPath: COLLECTION_MARKER_RES,
+            latitude: data[i].get('latitude'),
+            longitude: data[i].get('longitude'),
+            width: 40,
+            height: 40,
+            type: data[i].get('type'),
+            content: data[i].get('content'),
+          });
+        }
+        that.setData({
+          markers: markers,
+        });
+      }, function (error) {
+        // 查询失败
+        console.error('Failed to save in LeanCloud:' + error.message);
+        that.showPrompt('加载收藏失败');
+      });
+  },
+  // 取消搜索按钮点击事件
+  onCancelSearchTap: function (e) {
+    var that = this;
+    // 清空收藏标记
+    markers = [
+      locationMarker,
+      selectedMarker,
+    ];
+    // 清空搜索框
+    this.setData({
+      searchValue: '',
+      markers: markers,
+    });
+    var query = new AV.Query('Collection');
+    query.find()
+      .then(function (data) {
+        // 查询成功
+        for (var i = 0; i < data.length; ++i) {
+          // 添加标记
+          markers.push({
+            id: markers.length,
+            title: data[i].get('title'),
+            iconPath: COLLECTION_MARKER_RES,
+            latitude: data[i].get('latitude'),
+            longitude: data[i].get('longitude'),
+            width: 40,
+            height: 40,
+            type: data[i].get('type'),
+            content: data[i].get('content'),
+          });
+        }
+        that.setData({
+          markers: markers,
+        });
+      }, function (error) {
+        // 查询失败
+        console.error('Failed to save in LeanCloud:' + error.message);
+        that.showPrompt('加载收藏失败');
+      });
+  },
 
   // 地图非标记点点击事件
   onMapTap: function (e) {
@@ -140,7 +225,7 @@ Page({
           longitude: res.longitude,
         };
         // 更新选取点标记
-        markers[SELECTED_MARKER_ID] = {
+        selectedMarker = {
           id: SELECTED_MARKER_ID,
           title: 'selected',
           iconPath: SELECTED_MARKER_RES,
@@ -149,6 +234,7 @@ Page({
           width: 30,
           height: 30
         };
+        markers[SELECTED_MARKER_ID] = selectedMarker;
         that.setData({
           markers: markers,
         });
@@ -233,7 +319,6 @@ Page({
       collectContent = '';
     }
 
-    
     var collection = AV.Object.extend('Collection');
     var col = new collection();
     col.set('title', collectTitle);

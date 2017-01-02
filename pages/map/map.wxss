@@ -13,7 +13,7 @@ page {
 
 .map {
   width: 100%;
-  height: 90%;
+  height: 85%;
 }
 
 .view-modal {
@@ -41,4 +41,14 @@ page {
 .text-modal-s {
   font-size: 16pt;
   margin: 12rpx;
+}
+
+.view-search {
+  display: flex;
+}
+
+.input-search {
+  flex-basis: 64%;
+  height: 80rpx;
+  background-color: #FFFFFF;
 }
