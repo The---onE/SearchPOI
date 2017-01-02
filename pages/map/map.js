@@ -121,8 +121,15 @@ Page({
     }
     var that = this;
     // 新建查询
-    var query = new AV.Query('Collection');
-    query.contains('type', search);
+    // 标题中包含搜索值
+    var titleQuery = new AV.Query('Collection');
+    titleQuery.contains('title', search);
+    // 类型中包含搜索值
+    var typeQuery = new AV.Query('Collection');
+    typeQuery.contains('type', search);
+
+    // 标题中包含搜索值或类型中包含搜索值
+    var query = AV.Query.or(titleQuery, typeQuery);
     query.find()
       .then(function (data) {
         // 查询成功
@@ -184,7 +191,7 @@ Page({
       },
       fail: function () {
         // 选取失败
-        this.showPrompt('选取失败');
+        that.showPrompt('选取失败');
       },
       complete: function () {
         // 选取完成
