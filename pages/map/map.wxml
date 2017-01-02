@@ -1,6 +1,6 @@
 <!--pages/map/map.wxml-->
 <view class="board">
-  <map class="map" longitude="{{position.longitude}}" latitude="{{position.latitude}}" scale="{{scala}}" markers="{{markers}}" bindmarkertap="onMarkerTap" bindtap="onMapTap" />
+  <map class="map" longitude="{{position.longitude}}" latitude="{{position.latitude}}" scale="{{scala}}" markers="{{markers}}" bindmarkertap="onMarkerTap" bindtap="onMapTap" show-location="true" />
   <button bindtap="onCollectTap">添加收藏</button>
   <view class="view-search">
     <input class="input-search" bindinput="onSearchInput" value="{{searchValue}}" />

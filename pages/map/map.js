@@ -10,12 +10,12 @@ var DEFAULT_SCALA = 16;
 
 var location = {}; // 定位坐标
 var LOCATION_MARKER_ID = 0; // 定位点ID
-var locationMarker = { id: LOCATION_MARKER_ID }; //定位标记
+var locationMarker = { id: LOCATION_MARKER_ID }; // 定位标记
 var LOCATION_MARKER_RES = '/res/location.png'; // 定位标记图标
 
 var selected; // 选取坐标
 var SELECTED_MARKER_ID = 1; // 选取点ID
-var selectedMarker = { id: SELECTED_MARKER_ID, }; //选取标记
+var selectedMarker = { id: SELECTED_MARKER_ID, }; // 选取标记
 var SELECTED_MARKER_RES = '/res/selected.png'; // 选取标记图标
 
 // 添加收藏对话框
@@ -62,17 +62,32 @@ Page({
           latitude: res.latitude,
           longitude: res.longitude,
         }
-        // 更新定位标记
-        locationMarker = {
-          id: LOCATION_MARKER_ID,
-          title: 'location',
-          iconPath: LOCATION_MARKER_RES,
+        // // 更新定位标记
+        // locationMarker = {
+        //   id: LOCATION_MARKER_ID,
+        //   title: 'location',
+        //   iconPath: LOCATION_MARKER_RES,
+        //   latitude: res.latitude,
+        //   longitude: res.longitude,
+        //   width: 100,
+        //   height: 100,
+        // };
+        // markers[LOCATION_MARKER_ID] = locationMarker;
+        //若尚未选定点，则把当前定位作为选定点
+        if (!selected) {
+          selected = location;
+        }
+        // 更新选取点标记
+        selectedMarker = {
+          id: SELECTED_MARKER_ID,
+          title: 'selected',
+          iconPath: SELECTED_MARKER_RES,
           latitude: res.latitude,
           longitude: res.longitude,
-          width: 100,
-          height: 100,
+          width: 40,
+          height: 40
         };
-        markers[LOCATION_MARKER_ID] = locationMarker;
+        markers[SELECTED_MARKER_ID] = selectedMarker;
         // 更新数据
         that.setData({
           position: location, // 定位坐标
@@ -231,8 +246,8 @@ Page({
           iconPath: SELECTED_MARKER_RES,
           latitude: res.latitude,
           longitude: res.longitude,
-          width: 30,
-          height: 30
+          width: 40,
+          height: 40
         };
         markers[SELECTED_MARKER_ID] = selectedMarker;
         that.setData({
