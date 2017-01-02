@@ -77,17 +77,7 @@ Page({
         if (!selected) {
           selected = location;
         }
-        // 更新选取点标记
-        selectedMarker = {
-          id: SELECTED_MARKER_ID,
-          title: 'selected',
-          iconPath: SELECTED_MARKER_RES,
-          latitude: res.latitude,
-          longitude: res.longitude,
-          width: 40,
-          height: 40
-        };
-        markers[SELECTED_MARKER_ID] = selectedMarker;
+        that.moveSelectedMarker(selected);
         // 更新数据
         that.setData({
           position: location, // 定位坐标
@@ -113,23 +103,7 @@ Page({
     query.find()
       .then(function (data) {
         // 查询成功
-        for (var i = 0; i < data.length; ++i) {
-          // 添加标记
-          markers.push({
-            id: markers.length,
-            title: data[i].get('title'),
-            iconPath: COLLECTION_MARKER_RES,
-            latitude: data[i].get('latitude'),
-            longitude: data[i].get('longitude'),
-            width: 40,
-            height: 40,
-            type: data[i].get('type'),
-            content: data[i].get('content'),
-          });
-        }
-        that.setData({
-          markers: markers,
-        });
+        that.addCollectionMarker(data);
       }, function (error) {
         // 查询失败
         console.error('Failed to save in LeanCloud:' + error.message);
@@ -152,28 +126,10 @@ Page({
     query.find()
       .then(function (data) {
         // 查询成功
-        // 清空收藏标记
-        markers = [
-          locationMarker,
-          selectedMarker,
-        ];
-        for (var i = 0; i < data.length; ++i) {
-          // 添加标记
-          markers.push({
-            id: markers.length,
-            title: data[i].get('title'),
-            iconPath: COLLECTION_MARKER_RES,
-            latitude: data[i].get('latitude'),
-            longitude: data[i].get('longitude'),
-            width: 40,
-            height: 40,
-            type: data[i].get('type'),
-            content: data[i].get('content'),
-          });
-        }
-        that.setData({
-          markers: markers,
-        });
+        // 清空原收藏标记
+        that.clearCollectionMarker();
+        // 添加收藏标记
+        that.addCollectionMarker(data);
       }, function (error) {
         // 查询失败
         console.error('Failed to save in LeanCloud:' + error.message);
@@ -183,11 +139,8 @@ Page({
   // 取消搜索按钮点击事件
   onCancelSearchTap: function (e) {
     var that = this;
-    // 清空收藏标记
-    markers = [
-      locationMarker,
-      selectedMarker,
-    ];
+    // 清空原收藏标记
+    this.clearCollectionMarker();
     // 清空搜索框
     this.setData({
       searchValue: '',
@@ -196,24 +149,8 @@ Page({
     var query = new AV.Query('Collection');
     query.find()
       .then(function (data) {
-        // 查询成功
-        for (var i = 0; i < data.length; ++i) {
-          // 添加标记
-          markers.push({
-            id: markers.length,
-            title: data[i].get('title'),
-            iconPath: COLLECTION_MARKER_RES,
-            latitude: data[i].get('latitude'),
-            longitude: data[i].get('longitude'),
-            width: 40,
-            height: 40,
-            type: data[i].get('type'),
-            content: data[i].get('content'),
-          });
-        }
-        that.setData({
-          markers: markers,
-        });
+        // 添加收藏标记
+        that.addCollectionMarker(data);
       }, function (error) {
         // 查询失败
         console.error('Failed to save in LeanCloud:' + error.message);
@@ -240,19 +177,7 @@ Page({
           longitude: res.longitude,
         };
         // 更新选取点标记
-        selectedMarker = {
-          id: SELECTED_MARKER_ID,
-          title: 'selected',
-          iconPath: SELECTED_MARKER_RES,
-          latitude: res.latitude,
-          longitude: res.longitude,
-          width: 40,
-          height: 40
-        };
-        markers[SELECTED_MARKER_ID] = selectedMarker;
-        that.setData({
-          markers: markers,
-        });
+        that.moveSelectedMarker(selected);
       },
       cancel: function () {
         // 选取取消
@@ -386,6 +311,56 @@ Page({
   // 内容输入事件
   onCollectContentInput: function (e) {
     collectContent = e.detail.value;
+  },
+
+  // 将选取点标记移至指定点
+  moveSelectedMarker: function (point) {
+    // 更新选取点标记
+    selectedMarker = {
+      id: SELECTED_MARKER_ID,
+      title: 'selected',
+      iconPath: SELECTED_MARKER_RES,
+      latitude: point.latitude,
+      longitude: point.longitude,
+      width: 40,
+      height: 40
+    };
+    markers[SELECTED_MARKER_ID] = selectedMarker;
+    this.setData({
+      markers: markers
+    });
+  },
+
+  // 将收藏点添加到标记中
+  addCollectionMarker: function (colFromCloud) {
+    for (var i = 0; i < colFromCloud.length; ++i) {
+      // 添加标记
+      markers.push({
+        id: markers.length,
+        title: colFromCloud[i].get('title'),
+        iconPath: COLLECTION_MARKER_RES,
+        latitude: colFromCloud[i].get('latitude'),
+        longitude: colFromCloud[i].get('longitude'),
+        width: 40,
+        height: 40,
+        type: colFromCloud[i].get('type'),
+        content: colFromCloud[i].get('content'),
+      });
+    }
+    this.setData({
+      markers: markers,
+    });
+  },
+
+  // 清空收藏标记
+  clearCollectionMarker: function () {
+    markers = [
+      locationMarker,
+      selectedMarker,
+    ];
+    this.setData({
+      markers: markers,
+    });
   },
 
   onLoad: function (options) {
