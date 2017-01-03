@@ -12,8 +12,8 @@ page {
 }
 
 .map {
-  /* width: 100%; 在js中onLoad方法设置 */
-  /* height: 88%; 在js中onLoad方法设置 */
+  width: 100%;
+  height: 88%;
 }
 
 .view-modal {

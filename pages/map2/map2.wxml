@@ -5,7 +5,7 @@
     <button bindtap="onCancelSearchTap">取消</button>
     <button bindtap="onSearchTap">搜索</button>
   </view>
-  <map id="map" class="map" style="height:{{mapHeight}}; width:{{mapWidth}}" longitude="{{position.longitude}}" latitude="{{position.latitude}}" scale="{{scala}}" markers="{{markers}}" controls="{{controls}}" bindmarkertap="onMarkerTap" bindtap="onMapTap" show-location="true" />
+  <map id="map" class="map" longitude="{{position.longitude}}" latitude="{{position.latitude}}" scale="{{scala}}" markers="{{markers}}" bindmarkertap="onMarkerTap" bindtap="onMapTap" show-location="true" />
   <view class="view-add-collection">
     <button bindtap="onCollectTap">添加收藏</button>
   </view>
