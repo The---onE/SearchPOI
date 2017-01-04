@@ -211,6 +211,13 @@ Page({
     wx.chooseLocation({
       success: function (res) {
         // 选取成功
+        var point = {
+          latitude: res.latitude,
+          longitude: res.longitude,
+        };
+        that.setData({
+          position: point // 设置中心位置为选定点
+        });
       },
       cancel: function () {
         // 选取取消
