@@ -34,6 +34,9 @@ var selectedMarker = { id: SELECTED_MARKER_ID, }; // 选取标记
 var collectTitle; // 标题
 var collectType; // 类型
 var collectContent; // 内容
+var PRIVACY_PRIVATE = 1; // 私密
+var PRIVACY_PUBLIC = 0; // 公开
+var privacy = PRIVACY_PRIVATE; // 私密性
 
 var COLLECTION_MARKER_RES = '/res/collection.png'; // 收藏标记图标
 
@@ -55,7 +58,11 @@ Page({
   data: {
     collectModalHidden: true, // 添加收藏对话框隐藏
     collectionModalHidden: true, // 收藏信息对话框隐藏
-    value: '' // 输入框清空
+    value: '', // 输入框清空
+    privacy: [
+      { name: '私密', value: PRIVACY_PRIVATE, checked: 'true' },
+      { name: '公开', value: PRIVACY_PUBLIC },
+    ] // 私密性单选框选项
   },
 
   // 显示对话框
@@ -133,6 +140,7 @@ Page({
     var that = this;
     var query = new AV.Query('Collection');
     // 添加条件后，开始查询
+    query.equalTo('privacy', PRIVACY_PUBLIC); // 只显示公开的收藏
     query.find()
       .then(function (data) {
         // 查询成功
@@ -187,6 +195,8 @@ Page({
       markers: markers,
     });
     var query = new AV.Query('Collection');
+    // 添加条件后，开始查询
+    query.equalTo('privacy', PRIVACY_PUBLIC); // 只显示公开的收藏
     query.find()
       .then(function (data) {
         // 添加收藏标记
@@ -308,6 +318,7 @@ Page({
         col.set('content', collectContent);
         col.set('latitude', center.latitude);
         col.set('longitude', center.longitude);
+        col.set('privacy', privacy);
         col.save().then(function (success) {
           // 添加成功
           that.showPrompt('添加成功');
@@ -355,6 +366,10 @@ Page({
   // 内容输入事件
   onCollectContentInput: function (e) {
     collectContent = e.detail.value;
+  },
+  // 私密性单选框更改事件
+  onPrivacyChange: function (e) {
+    privacy = parseInt(e.detail.value);
   },
 
   // 将收藏点添加到标记中
