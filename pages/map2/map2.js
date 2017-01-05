@@ -22,6 +22,9 @@ var SELECTED_MARKER_RES = '/res/selected.png'; // 选取标记图标
 var collectTitle; // 标题
 var collectType; // 类型
 var collectContent; // 内容
+var PRIVACY_PRIVATE = 1; // 私密
+var PRIVACY_PUBLIC = 0; // 公开
+var privacy = PRIVACY_PRIVATE; // 私密性
 
 var COLLECTION_MARKER_RES = '/res/collection.png'; // 收藏标记图标
 
@@ -38,7 +41,11 @@ Page({
   data: {
     collectModalHidden: true, // 添加收藏对话框隐藏
     collectionModalHidden: true, // 收藏信息对话框隐藏
-    value: '' // 输入框清空
+    value: '', // 输入框清空
+    privacy: [
+      { name: '私密', value: PRIVACY_PRIVATE, checked: 'true' },
+      { name: '公开', value: PRIVACY_PUBLIC },
+    ] // 私密性单选框选项
   },
 
   // 显示对话框
@@ -100,6 +107,7 @@ Page({
     var that = this;
     var query = new AV.Query('Collection');
     // 添加条件后，开始查询
+    query.equalTo('privacy', PRIVACY_PUBLIC); // 只显示公开的收藏
     query.find()
       .then(function (data) {
         // 查询成功
@@ -118,18 +126,40 @@ Page({
   onSearchTap: function (e) {
     if (!search || search.length == 0) {
       this.showPrompt('搜索值不能为空');
+      return;
     }
     var that = this;
     // 新建查询
-    // 标题中包含搜索值
-    var titleQuery = new AV.Query('Collection');
-    titleQuery.contains('title', search);
+   // 标题中包含搜索值
+    var titleLike = new AV.Query('Collection');
+    titleLike.contains('title', search);
     // 类型中包含搜索值
-    var typeQuery = new AV.Query('Collection');
-    typeQuery.contains('type', search);
+    var typeLike = new AV.Query('Collection');
+    typeLike.contains('type', search);
+    // 公开类型
+    var publicType = new AV.Query('Collection');
+    publicType.equalTo('privacy', PRIVACY_PUBLIC);
+    // 公开条件
+    var publicCondition = AV.Query.or(titleLike, typeLike);
+    // 公开搜索
+    var publicQuery = AV.Query.and(publicType, publicCondition);
 
-    // 标题中包含搜索值或类型中包含搜索值
-    var query = AV.Query.or(titleQuery, typeQuery);
+    // 标题等于搜索值
+    var titleEqual= new AV.Query('Collection');
+    titleEqual.equalTo('title', search);
+    // 类型等于搜索值
+    var typeEqual = new AV.Query('Collection');
+    typeEqual.equalTo('type', search);
+    // 私密类型
+    var privateType = new AV.Query('Collection');
+    privateType.equalTo('privacy', PRIVACY_PRIVATE); 
+    // 私密条件：标题完全匹配或类型完全匹配
+    var privateCondition = AV.Query.or(titleEqual, typeEqual);
+    // 私密搜索
+    var privateQuery = AV.Query.and(privateType, privateCondition);
+
+    // 公开搜索和私密搜索都显示
+    var query = AV.Query.or(publicQuery, privateQuery);
     query.find()
       .then(function (data) {
         // 查询成功
@@ -153,7 +183,10 @@ Page({
       searchValue: '',
       markers: markers,
     });
+    search = '';
     var query = new AV.Query('Collection');
+    // 添加条件后，开始查询
+    query.equalTo('privacy', PRIVACY_PUBLIC); // 只显示公开的收藏
     query.find()
       .then(function (data) {
         // 添加收藏标记
@@ -273,6 +306,7 @@ Page({
     col.set('content', collectContent);
     col.set('latitude', selected.latitude);
     col.set('longitude', selected.longitude);
+    col.set('privacy', privacy);
     col.save().then(function (success) {
       // 添加成功
       that.showPrompt('添加成功');
@@ -318,6 +352,10 @@ Page({
   // 内容输入事件
   onCollectContentInput: function (e) {
     collectContent = e.detail.value;
+  },
+  // 私密性单选框更改事件
+  onPrivacyChange: function (e) {
+    privacy = parseInt(e.detail.value);
   },
 
   // 将选取点标记移至指定点

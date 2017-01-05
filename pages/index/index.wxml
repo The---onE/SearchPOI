@@ -8,5 +8,8 @@
     <view>
       <button bindtap="openMapTap">打开地图</button>
     </view>
+    <view>
+      <button bindtap="openMap2Tap">打开地图(旧)</button>
+    </view>
   </view>
 </view>

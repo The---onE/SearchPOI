@@ -14,6 +14,11 @@
       <input class="input-modal" value="{{value}}" bindinput="onCollectTitleInput" placeholder="请输入标题" />
       <input class="input-modal" value="{{value}}" bindinput="onCollectTypeInput" placeholder="请输入类型" />
       <input class="input-modal-s" value="{{value}}" bindinput="onCollectContentInput" placeholder="请输入详细内容(可选)" />
+      <radio-group class="radio-group-modal" bindchange="onPrivacyChange">
+        <label class="radio" wx:for-items="{{privacy}}">
+          <radio value="{{item.value}}" checked="{{item.checked}}" />{{item.name}}
+        </label>
+      </radio-group>
     </view>
   </modal>
   <modal title="收藏信息" hidden="{{collectionModalHidden}}" confirm-text="确定" cancel-text="取消" bindconfirm="onCollectionTap" bindcancel="onCollectionTap">

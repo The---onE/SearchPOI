@@ -159,18 +159,40 @@ Page({
   onSearchTap: function (e) {
     if (!search || search.length == 0) {
       this.showPrompt('搜索值不能为空');
+      return;
     }
     var that = this;
     // 新建查询
     // 标题中包含搜索值
-    var titleQuery = new AV.Query('Collection');
-    titleQuery.contains('title', search);
+    var titleLike = new AV.Query('Collection');
+    titleLike.contains('title', search);
     // 类型中包含搜索值
-    var typeQuery = new AV.Query('Collection');
-    typeQuery.contains('type', search);
+    var typeLike = new AV.Query('Collection');
+    typeLike.contains('type', search);
+    // 公开类型
+    var publicType = new AV.Query('Collection');
+    publicType.equalTo('privacy', PRIVACY_PUBLIC);
+    // 公开条件
+    var publicCondition = AV.Query.or(titleLike, typeLike);
+    // 公开搜索
+    var publicQuery = AV.Query.and(publicType, publicCondition);
 
-    // 标题中包含搜索值或类型中包含搜索值
-    var query = AV.Query.or(titleQuery, typeQuery);
+    // 标题等于搜索值
+    var titleEqual= new AV.Query('Collection');
+    titleEqual.equalTo('title', search);
+    // 类型等于搜索值
+    var typeEqual = new AV.Query('Collection');
+    typeEqual.equalTo('type', search);
+    // 私密类型
+    var privateType = new AV.Query('Collection');
+    privateType.equalTo('privacy', PRIVACY_PRIVATE); 
+    // 私密条件：标题完全匹配或类型完全匹配
+    var privateCondition = AV.Query.or(titleEqual, typeEqual);
+    // 私密搜索
+    var privateQuery = AV.Query.and(privateType, privateCondition);
+
+    // 公开搜索和私密搜索都显示
+    var query = AV.Query.or(publicQuery, privateQuery);
     query.find()
       .then(function (data) {
         // 查询成功
@@ -194,6 +216,7 @@ Page({
       searchValue: '',
       markers: markers,
     });
+    search = '';
     var query = new AV.Query('Collection');
     // 添加条件后，开始查询
     query.equalTo('privacy', PRIVACY_PUBLIC); // 只显示公开的收藏

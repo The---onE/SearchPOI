@@ -43,6 +43,10 @@ page {
   margin: 12rpx;
 }
 
+.radio-group-modal {
+  text-align: center;
+}
+
 .view-search {
   display: flex;
   height: 6%;
