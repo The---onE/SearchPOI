@@ -32,3 +32,19 @@
 #### map2目录
 地图页面的备份目录，首页选择【打开地图(旧)】选项进入，基本功能与新地图一致，选点方式为另一方式  
 选点方式为点击地图打开微信选点工具选点
+## 实现功能
+### 首页
+可点击按钮进入地图页，两个地图页的选点方式不同，其余功能一致
+![image](https://github.com/The---onE/SearchPOI/blob/master/res/introduction-index.png)
+### 定位
+进入地图页后程序默认直接开始定位，定位成功后在当前位置显示标记，并将地图中心设为当前位置
+![image](https://github.com/The---onE/SearchPOI/blob/master/res/introduction-location.png)
+### 添加收藏
+地图定位成功后可进行选点，新旧版本分别为拖动地图选点和打开微信选点工具选点，选点成功后可点击添加收藏按钮弹出添加收藏对话框，输入对应信息后可将选定点及相关信息添加到收藏，收藏信息转化为LeanStorage对象保存至LeanCloud服务器
+![image](https://github.com/The---onE/SearchPOI/blob/master/res/introduction-collect.png)
+### 搜索收藏
+地图上会为收藏点显示标记，在没有搜索的情况下，会默认显示所有公开的收藏，输入搜索条件并点击搜索按钮后会进行搜索，搜索规则为：可以搜索到所有标题或类型**包含**搜索条件的**公开**收藏**及**所有标题或类型与搜索条件**完全一致**的**私密**收藏
+![image](https://github.com/The---onE/SearchPOI/blob/master/res/introduction-search.png)
+### 收藏信息
+点击地图上的收藏标记会打开收藏信息对话框，其中包含收藏的详细信息
+![image](https://github.com/The---onE/SearchPOI/blob/master/res/introduction-information.png)
