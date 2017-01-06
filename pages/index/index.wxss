@@ -17,5 +17,13 @@
 }
 
 .map {
-  margin-top: 50px;
+  margin-top: 50rpx;
+}
+
+.button-map {
+  margin-top: 20rpx;
+}
+
+.button-map2 {
+  margin-top: 50rpx;
 }
