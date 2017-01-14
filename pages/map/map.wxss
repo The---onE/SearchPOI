@@ -62,3 +62,8 @@ page {
   height: 80rpx;
   background-color: #FFFFFF;
 }
+
+button {
+  background-color: #09bb07;
+  color: #ffffff;
+}

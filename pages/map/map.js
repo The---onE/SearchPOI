@@ -70,6 +70,7 @@ Page({
     wx.showModal({
       title: '提示',
       content: content,
+      showCancel: false,
     });
   },
 
@@ -124,8 +125,8 @@ Page({
       position: {
         left: mapWidth / 2 - 40 / 2,
         top: mapHeight / 2 - 40,
-        width: 40,
-        height: 40
+        width: mapWidth * 0.1,
+        height: mapWidth * 0.1
       }, // 根据地图宽高和图片尺寸计算位置
       clickable: true
     }
@@ -257,7 +258,7 @@ Page({
       },
       fail: function () {
         // 选取失败
-        that.showPrompt('选取失败');
+        // that.showPrompt('选取失败');
       },
       complete: function () {
         // 选取完成
@@ -351,8 +352,8 @@ Page({
             iconPath: COLLECTION_MARKER_RES,
             latitude: center.latitude,
             longitude: center.longitude,
-            width: 40,
-            height: 40
+            width: mapWidth * 0.1,
+            height: mapWidth * 0.1
           });
           that.setData({
             markers: markers,
@@ -405,8 +406,8 @@ Page({
         iconPath: COLLECTION_MARKER_RES,
         latitude: colFromCloud[i].get('latitude'),
         longitude: colFromCloud[i].get('longitude'),
-        width: 40,
-        height: 40,
+        width: mapWidth * 0.1,
+        height: mapWidth * 0.1,
         type: colFromCloud[i].get('type'),
         content: colFromCloud[i].get('content'),
       });
